@@ -1,6 +1,5 @@
 from django.db import models
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.models import PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.urls import reverse
 from django.db.models.signals import pre_save, post_save
 
@@ -123,8 +122,7 @@ def update_estado_cheque(sender, instance, created, *args, **kwargs):
 
 post_save.connect(update_estado_cheque, sender=Regularizacao)
 
-
-''' class UserManager(BaseUserManager):
+class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         """Creates and saves a new user"""
@@ -158,20 +156,20 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
-    image = models.ImageField(upload_to=user_image_path, null=True, blank=True)
+# class Profile(models.Model):
+#     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
+#     image = models.ImageField(upload_to=user_image_path, null=True, blank=True)
    
-    def __str__(self):
-        return self.user.email
+#     def __str__(self):
+#         return self.user.email
 
-    @property
-    def imageURL(self):
-        try:
-            url = self.image.url
-        except:
-            url = ''
-        return url
+#     @property
+#     def imageURL(self):
+#         try:
+#             url = self.image.url
+#         except:
+#             url = ''
+#         return url
 
 
     # def save(self, *args,**kwargs):
@@ -182,9 +180,10 @@ class Profile(models.Model):
     #         img.thumbnail(new_size)
     #         img.save(self.image.path)
 
-def post_save_user_signal(sender, instance, created, *args, **kwargs):
-    if created:
-        profile = Profile.objects.create(user=instance)
-        profile.save()
+# def post_save_user_signal(sender, instance, created, *args, **kwargs):
+#     if created:
+#         profile = Profile.objects.create(user=instance)
+#         profile.save()
 
-post_save.connect(post_save_user_signal, sender=User) '''
+# post_save.connect(post_save_user_signal, sender=User)
+ 
