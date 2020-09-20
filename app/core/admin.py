@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext as _
 
-from core.models import Banco, Emitente, Assinante, Documento, Telefone, Cheque, Regularizacao, MotivoDevolucao, User
+from core.models import Banco, Emitente, Assinante, Documento, Telefone, Cheque, Regularizacao, MotivoDevolucao, User, Profile
 
 
 
@@ -26,6 +26,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
 admin.site.register(User, UserAdmin)
+admin.site.register(Profile)
 admin.site.register(Banco)
 admin.site.register(Emitente)
 admin.site.register(Assinante)

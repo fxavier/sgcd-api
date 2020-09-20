@@ -41,8 +41,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     
+    #CELERY
+    'django_celery_results',
+    'django_celery_beat',
+    
     'core',
     'user',
+    'cheque',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +143,13 @@ MEDIA_ROOT = 'vol/web/media'
 STATIC_ROOT = 'vol/web/static'
 
 AUTH_USER_MODEL = 'core.User'
+
+
+CELERY_BROKER_URL = 'redis://redis:6379'
+
+CELERY_RESULT_BACKEND = 'redis://redis:6379' #'django-db'
+
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TASK_SERIALIZER = 'json'

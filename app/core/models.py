@@ -54,7 +54,7 @@ class Telefone(models.Model):
 class Assinante(models.Model):
     nome = models.CharField(max_length=255)
     numero_conta = models.CharField(max_length=100, unique=True)
-    telefone = models.ManyToManyField(Telefone)
+    telefones = models.ManyToManyField('Telefone')
     email = models.EmailField(max_length=100, unique=True)
     endereco = models.CharField(max_length=255)
     bloqueio_utr = models.BooleanField(default=False)
@@ -65,18 +65,15 @@ class Assinante(models.Model):
 class Emitente(models.Model):
     nome = models.CharField(max_length=255)
     numero_conta = models.CharField(max_length=100, unique=True)
-    telefone = models.ManyToManyField(Telefone)
+    telefones = models.ManyToManyField('Telefone')
     email = models.EmailField(max_length=100, unique=True)
     endereco = models.CharField(max_length=255)
     tipo = models.CharField(max_length=1, choices=TIPO_EMITENTE)
-    assinante = models.ManyToManyField(Assinante, blank=True)
+    assinantes = models.ManyToManyField('Assinante', blank=True)
     bloqueio_utr = models.BooleanField(default=False)
 
     def __str__(self):
         return self.nome
-
-    def get_absolute_url(self):
-        return reverse('core:emitente')
 
 
 class Cheque(models.Model):
@@ -105,7 +102,7 @@ class Documento(models.Model):
 class Regularizacao(models.Model):
     forma_regularizacao = models.CharField(max_length=10, choices=FORMA_REGULARIZACAO)
     cheque = models.ForeignKey(Cheque, on_delete=models.CASCADE)
-    documento = models.ManyToManyField(Documento)
+    documentos = models.ManyToManyField(Documento)
 
     def __str__(self):
         return self.cheque.numero_cheque
@@ -156,29 +153,29 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
 
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
-#     image = models.ImageField(upload_to=user_image_path, null=True, blank=True)
+class Profile(models.Model):
+    user = models.OneToOneField(User,on_delete=models.CASCADE,related_name="profile")
+    image = models.ImageField(upload_to=user_image_path, null=True, blank=True)
    
-#     def __str__(self):
-#         return self.user.email
+    def __str__(self):
+        return self.user.nome
 
-#     @property
-#     def imageURL(self):
-#         try:
-#             url = self.image.url
-#         except:
-#             url = ''
-#         return url
+    @property
+    def imageURL(self):
+        try:
+            url = self.image.url
+        except:
+            url = ''
+        return url
 
 
-    # def save(self, *args,**kwargs):
-    #     super(Profile, self).save(*args,**kwargs)
-    #     img = Image.open(self.image)
-    #     if img.height > 200 or img.width > 200 :
-    #         new_size = (200,200)
-    #         img.thumbnail(new_size)
-    #         img.save(self.image.path)
+    def save(self, *args,**kwargs):
+        super(Profile, self).save(*args,**kwargs)
+        img = Image.open(self.image)
+        if img.height > 200 or img.width > 200 :
+            new_size = (200,200)
+            img.thumbnail(new_size)
+            img.save(self.image.path)
 
 # def post_save_user_signal(sender, instance, created, *args, **kwargs):
 #     if created:
@@ -186,4 +183,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 #         profile.save()
 
 # post_save.connect(post_save_user_signal, sender=User)
+
+def pre_save_cheque_estado(sender, instance, *args, **kwargs):
+    instance.estado_cheque = 'Devolvido'
+    
+pre_save.connect(pre_save_cheque_estado, sender=Cheque)
  
