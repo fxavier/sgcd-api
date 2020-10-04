@@ -13,6 +13,8 @@ import os
 
 from pathlib import Path
 
+# from celery.schedules import crontab
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,7 +28,7 @@ SECRET_KEY = 'bd@$ow)yr6=kc7p33ppo-@_4=uo%cb&-yststjcb^omug@ak=0'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.38.133']
 
 
 # Application definition
@@ -40,10 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     
     #CELERY
-    'django_celery_results',
-    'django_celery_beat',
+    # 'django_celery_results',
+    # 'django_celery_beat',
     
     'core',
     'user',
@@ -53,11 +56,13 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -145,11 +150,40 @@ STATIC_ROOT = 'vol/web/static'
 AUTH_USER_MODEL = 'core.User'
 
 
-CELERY_BROKER_URL = 'redis://redis:6379'
+# CELERY_BROKER_URL = 'redis://redis:6379'
 
-CELERY_RESULT_BACKEND = 'redis://redis:6379' #'django-db'
+# CELERY_RESULT_BACKEND = 'redis://redis:6379' 
 
 
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TASK_SERIALIZER = 'json'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_TASK_SERIALIZER = 'json'
+
+
+# CELERY_BEAT_SCHEDULE = {
+#     'update_dias': {
+#         'task': 'core.tasks.update_dias',
+#         'schedule': crontab()  # execute every minute
+#     },
+#      'update_status_cheque': {
+#         'task': 'core.tasks.update_status_cheque',
+#         'schedule': crontab()  # execute every minute
+#     },
+#      'bloqueio_conta': {
+#         'task': 'core.tasks.bloqueio_conta',
+#         'schedule': crontab()  # execute every minute
+#     },
+     
+     
+# }
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080"
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
